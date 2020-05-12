@@ -24,6 +24,9 @@ target_include_directories(waveletdeconv PRIVATE "${ANITA_UTIL_INSTALL_DIR}/incl
 # and we need ROOT
 find_package(ROOT REQUIRED)
 
+# and we need FFTW as well
+find_package(FFTW3 REQUIRED)
+
 # include against forward
 target_include_directories(waveletdeconv PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
