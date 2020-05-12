@@ -2,7 +2,7 @@
 add_library(waveletdeconv STATIC "WaveletDeconvolution.cc")
 
 # add our include directory for header files
-target_include_directories(waveletdeconv PRIVATE "${CMAKE_HOME_DIRECTORY}")
+target_include_directories(waveletdeconv PRIVATE "${PROJECT_SOURCE_DIR}")
 
 # we also need access to ANITA tools to build waveletdeconv
 target_include_directories(waveletdeconv PRIVATE "${ANITA_UTIL_INSTALL_DIR}/include")
@@ -14,7 +14,7 @@ target_link_directories(waveletdeconv PUBLIC $ENV{ANITA_UTIL_INSTALL_DIR}/lib)
 find_package(ROOT REQUIRED)
 
 # link against forward
-target_include_directories(waveletdeconv PUBLIC "${CMAKE_HOME_DIRECTORY}/include")#
+target_include_directories(waveletdeconv PUBLIC "${PROJECT_SOURCE_DIR}/include")#
 
 # setup our include directories for ROOT
 target_include_directories(waveletdeconv PUBLIC "${ROOT_INCLUDE_DIRS}")
