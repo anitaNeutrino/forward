@@ -455,25 +455,6 @@ namespace forward {
     return v;
   }
 
-  // takes a real vector and turns it into a std::complex vector
-  auto
-  realToComplex(const Array<double>& real) -> Array<complex> {
-
-    // the size of the input array
-    const auto N{real.size()};
-
-    // allocate output array
-    Array<complex> out(N, 0.);
-
-    // and loop through the array
-    for (unsigned int i = 0; i < N; ++i) {
-      out[i] = std::complex<double>(real[i]);
-    }
-
-    // and return the complex array
-    return out;
-  }
-
   /**
    * Return the wavelet basis vectors.
    *
@@ -1227,7 +1208,7 @@ namespace forward {
              const ThresholdRule rule) -> Array<double> {
 
     // check that scaling and rho are the right length
-    if ((scaling.size() != p+1) || (rho.size() != p+1)) {
+    if ((scaling.size() != p + 1) || (rho.size() != p + 1)) {
       throw std::invalid_argument("`scaling` and `rho` must be of length (p+1)");
     }
 
