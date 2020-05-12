@@ -173,10 +173,6 @@ namespace forward {
     // get the length of the input vector
     const auto N{A.size()};
 
-    if (N == 0) {
-      throw std::invalid_argument("N == 0 in wienForwd");
-    }
-
     // create the output vector
     Array<complex> out(N);
 
@@ -205,10 +201,6 @@ namespace forward {
 
     // get the length of the input vector
     const auto N{A.size()};
-
-    if (N == 0) {
-      throw std::invalid_argument("N == 0 in wienForwd");
-    }
 
     // make sure that the vector is of even length
     if (N % 2 == 1) {
@@ -244,10 +236,6 @@ namespace forward {
     // get the length of the input vector
     const auto N{A.size()};
 
-    if (N == 0) {
-      throw std::invalid_argument("N == 0 in wienForwd");
-    }
-
     // and allocate the output vector and fill it with zero
     Array<T> out(2 * N, 0.);
 
@@ -275,10 +263,6 @@ namespace forward {
 
     // get the length of the input vector
     const auto N{A.size()};
-
-    if (N == 0) {
-      throw std::invalid_argument("N == 0 in wienForwd");
-    }
 
     // check that the vector is of even length
     if (N % 2 == 1) {
