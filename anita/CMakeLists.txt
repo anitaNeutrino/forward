@@ -1,42 +1,31 @@
-# create a static library
-add_library(waveletdeconv STATIC "WaveletDeconvolution.cc")
+# this minimum version hasn't been
+# tested extensively
+cmake_minimum_required(VERSION 2.8.10)
 
-# add our include directory for header files
-target_include_directories(waveletdeconv PRIVATE "${PROJECT_SOURCE_DIR}")
+# setup our project
+project(WaveletDeconvolution
+  LANGUAGES CXX)
+
+# and a version
+set(CMAKE_PROJECT_VERSION 0.1.0)
+
+# create a static library
+add_library(waveletdeconv INTERFACE)
+
+# install
+target_include_directories(waveletdeconv INTERFACE
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include/>
+)
 
 # we also need access to ANITA tools to build waveletdeconv
 target_include_directories(waveletdeconv PRIVATE "${ANITA_UTIL_INSTALL_DIR}/include")
 
-# add the ANITA_UTIL_INSTALL_DIR to our library search path
-target_link_directories(waveletdeconv PUBLIC $ENV{ANITA_UTIL_INSTALL_DIR}/lib)
-
 # and we need ROOT
 find_package(ROOT REQUIRED)
 
-# link against forward
-target_include_directories(waveletdeconv PUBLIC "${PROJECT_SOURCE_DIR}/include")#
-
-# setup our include directories for ROOT
-target_include_directories(waveletdeconv PUBLIC "${ROOT_INCLUDE_DIRS}")
-
-# and link against ROOT and FFTW
-target_link_libraries(waveletdeconv PUBLIC "${ROOT_LIBRARIES}")
-
-# we need to link against AnitaEvent
-find_library(ANITA_EVENT_LIB AnitaEvent
-  PATHS $ENV{ANITA_UTIL_INSTALL_DIR}/lib
-  REQUIRED
-  )
-
-# we also need to link against AnitaAnalysis
-find_library(ANITA_ANALYSIS_LIB AnitaAnalysis
-  PATHS $ENV{ANITA_UTIL_INSTALL_DIR}/lib
-  REQUIRED
-  )
-
-# link against the needed analysis tools
-target_link_libraries(waveletdeconv PUBLIC ${ANITA_EVENT_LIB})
-target_link_libraries(waveletdeconv PUBLIC ${ANITA_ANALYSIS_LIB})
+# include against forward
+target_include_directories(waveletdeconv PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 set(COMPILE_OPTIONS -Wall -Wextra -Wdisabled-optimization -fconcepts
   -pedantic -Wshadow -Wno-sign-conversion -Wno-sign-compare -Wold-style-cast
@@ -54,5 +43,4 @@ set_target_properties(waveletdeconv PROPERTIES PUBLIC_HEADER "WaveletDeconvoluti
 
 # and install the headers and the library
 INSTALL(TARGETS waveletdeconv
-        LIBRARY DESTINATION lib
         PUBLIC_HEADER DESTINATION include)
