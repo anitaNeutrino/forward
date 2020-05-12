@@ -78,3 +78,28 @@ auto
 WaveletDeconvolution::next_pow2(const unsigned int N) -> unsigned int {
   return pow(2., ceil(log2(N)));
 }
+
+auto
+WaveletDeconvolution::set_scaling(const RealArray& scaling) -> void {
+
+  // check the size
+  if (scaling.size() != p_ + 1) {
+    throw std::invalid_argument("`scaling` must be of length (p+1)");
+  }
+
+  // if we get here, we are good so update
+  this->scaling_ = scaling;
+}
+
+auto
+WaveletDeconvolution::set_rho(const RealArray& rho) -> void {
+
+  // check the size
+  if (rho.size() != p_ + 1) {
+    throw std::invalid_argument("`rho` must be of length (p+1)");
+  }
+
+  // if we get here, we are good so update
+  this->rho_ = rho;
+
+}

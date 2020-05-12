@@ -54,6 +54,25 @@ namespace AnitaResponse {
     auto
     deconvolve(AnalysisWaveform* wf, const AnalysisWaveform* response) const -> void;
 
+      /**
+       * Update the scaling array.
+       *
+       * The new array must be of length (p+1).
+       *
+       */
+      auto
+      set_scaling(const RealArray& scaling) -> void;
+
+      /**
+       * Update rho - the Fourier shrinkage parameter
+       *
+       * The new array must be of length (p+1).
+       *
+       */
+      auto
+      set_rho(const RealArray& rho) -> void;
+
+
     /**
      * A no-op destructor.
      */
