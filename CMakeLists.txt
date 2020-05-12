@@ -37,3 +37,6 @@ option(ANITA_TOOLS "Compile the AnitaTools interface" OFF)
 if (ANITA_TOOLS)
   add_subdirectory(anita)
 endif()
+
+# setup our install targets
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)

@@ -48,3 +48,11 @@ set(COMPILE_OPTIONS -Wall -Wextra -Wdisabled-optimization -fconcepts
 
 # add the compile options to the library
 target_compile_options(waveletdeconv PRIVATE ${COMPILE_OPTIONS})
+
+# setup our public headers
+set_target_properties(waveletdeconv PROPERTIES PUBLIC_HEADER "WaveletDeconvolution.h")
+
+# and install the headers and the library
+INSTALL(TARGETS waveletdeconv
+        LIBRARY DESTINATION lib
+        PUBLIC_HEADER DESTINATION include)
