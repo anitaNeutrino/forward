@@ -62,6 +62,11 @@ WaveletDeconvolution::deconvolve(AnalysisWaveform* wf,
   // update the internal state for waveforms of this length
   this->update_state(wf->even()->GetN());
 
+  // check that they have the same length when padded
+  if (next_pow2(wf->even()->GetN()) != next_pow2(response->even()->GetN())) {
+    throw std::invalid_argument("`wf` and `response` have different power of 2 lengths.");
+  }
+
   // compute the size of the waveforms that we use
   const auto N{next_pow2(wf->even()->GetN())};
 
@@ -69,9 +74,16 @@ WaveletDeconvolution::deconvolve(AnalysisWaveform* wf,
   const auto waveform{get_vector(N, *wf)};
   const auto impulse{get_vector(N, *response)};
 
-  // compute the deconvolved waveform
+  // compute the deconvolved waveform as a std::vector
   const auto deconvolved{
       forward::deconvolve(waveform, impulse, p_, type_, noiseSd_, scaling_, rho_, rule_)};
+
+  // construct the deconvolved waveform as an AnalysisWaveform
+  const auto dwaveform =
+      new AnalysisWaveform(wf->Neven(), deconvolved.data(), wf->deltaT(), 0.);
+  
+  // and set wf to point to the new deconvolved waveform
+  wf = dwaveform;
 }
 
 auto
@@ -101,5 +113,4 @@ WaveletDeconvolution::set_rho(const RealArray& rho) -> void {
 
   // if we get here, we are good so update
   this->rho_ = rho;
-
 }
