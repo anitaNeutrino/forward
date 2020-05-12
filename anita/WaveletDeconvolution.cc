@@ -59,8 +59,11 @@ auto
 WaveletDeconvolution::deconvolve(AnalysisWaveform* wf,
                                  const AnalysisWaveform* response) const -> void {
 
+  // the leng of the input waveform
+  const auto Nwf{wf->even()->GetN()};
+
   // update the internal state for waveforms of this length
-  this->update_state(wf->even()->GetN());
+  this->update_state(Nwf);
 
   // check that they have the same length when padded
   if (next_pow2(wf->even()->GetN()) != next_pow2(response->even()->GetN())) {
@@ -68,7 +71,7 @@ WaveletDeconvolution::deconvolve(AnalysisWaveform* wf,
   }
 
   // compute the size of the waveforms that we use
-  const auto N{next_pow2(wf->even()->GetN())};
+  const auto N{next_pow2(Nwf)};
 
   // get the vectors for the waveform and response
   const auto waveform{get_vector(N, *wf)};
@@ -78,12 +81,8 @@ WaveletDeconvolution::deconvolve(AnalysisWaveform* wf,
   const auto deconvolved{
       forward::deconvolve(waveform, impulse, p_, type_, noiseSd_, scaling_, rho_, rule_)};
 
-  // construct the deconvolved waveform as an AnalysisWaveform
-  const auto dwaveform =
-      new AnalysisWaveform(wf->Neven(), deconvolved.data(), wf->deltaT(), 0.);
-  
   // and set wf to point to the new deconvolved waveform
-  wf = dwaveform;
+  std::copy(deconvolved.cbegin(), deconvolved.cbegin() + Nwf, wf->updateEven()->GetY());
 }
 
 auto
