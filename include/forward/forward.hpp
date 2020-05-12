@@ -56,7 +56,7 @@ namespace forward {
    *
    * @returns    The FFT of `in`.`
    */
-  auto
+  inline auto
   fft(const Array<complex>& in) -> Array<complex> {
 
     // get the length of the input vector
@@ -90,7 +90,7 @@ namespace forward {
    *
    * @returns    The FFT of `in`.`
    */
-  auto
+  inline auto
   fft(const Array<double>& in) -> Array<complex> {
 
     // get the length of the input vector
@@ -116,7 +116,7 @@ namespace forward {
    *
    * @returns    The IFFT of `in`.`
    */
-  auto
+  inline auto
   ifft(const Array<complex>& in) -> Array<complex> {
 
     // get the length of the input vector
@@ -158,7 +158,7 @@ namespace forward {
    *
    * @returns    The convolution of A & B.
    */
-  auto
+  inline auto
   convolve(const Array<complex>& A, const Array<complex>& B) -> Array<complex> {
 
     // check that these are the same length
@@ -200,7 +200,7 @@ namespace forward {
    *
    */
   template <typename T>
-  auto
+  inline auto
   downsample(const Array<T>& A) -> Array<T> {
 
     // get the length of the input vector
@@ -238,7 +238,7 @@ namespace forward {
    *
    */
   template <typename T>
-  auto
+  inline auto
   upsample(const Array<T> A) -> Array<T> {
 
     // get the length of the input vector
@@ -270,7 +270,7 @@ namespace forward {
    *
    * @returns    The input vector folded in half.
    */
-  auto
+  inline auto
   fold(const Array<complex>& A) -> Array<complex> {
 
     // get the length of the input vector
@@ -311,7 +311,7 @@ namespace forward {
    * @param ztil   The second parent wavelet.
    *
    */
-  auto
+  inline auto
   fwt(const Array<complex>& z,
       const unsigned int sdim,
       const Array<complex>& util,
@@ -368,7 +368,7 @@ namespace forward {
   }
 
   // // recursive implementation of inverse wavelet transform
-  auto
+  inline auto
   ifwt(const Array<complex>& z,
        const unsigned int sdim,
        const Array<complex>& u,
@@ -431,7 +431,7 @@ namespace forward {
    *
    * @returns v   The other parent wavelet.
    */
-  auto
+  inline auto
   getother(const Array<complex>& u) -> Array<complex> {
 
     // get the length of the input vector
@@ -463,7 +463,7 @@ namespace forward {
    * @param N    The length of the output arrays.
    * @param filterType    The wavelets to use.
    */
-  auto
+  inline auto
   filt(const int N, const WaveletType& filterType)
       -> std::tuple<Array<complex>, Array<complex>, Array<complex>, Array<complex>> {
 
@@ -709,7 +709,7 @@ namespace forward {
    *  @param scaling    The Wiener scaling parameter.
    *
    */
-  auto
+  inline auto
   fWienDec(const Array<complex>& fSignal,
            const Array<complex>& fImpulse,
            const double noiseSd,
@@ -770,7 +770,7 @@ namespace forward {
    * @returns    The complex dot product of A and B.
    */
   template <typename T>
-  auto
+  inline auto
   innerProduct(const Array<T>& A, const Array<T>& B) -> T {
 
     // check that A and B are the same size
@@ -801,7 +801,7 @@ namespace forward {
    *
    */
   template <typename T>
-  auto
+  inline auto
   circShift(const Array<T>& A, const unsigned int index) -> Array<T> {
 
     // get the length of the input vector
@@ -841,7 +841,7 @@ namespace forward {
    * @returns The thresholded vector and the thresholded ratios.
    *
    */
-  auto
+  inline auto
   applyThreshold(const Array<complex>& wt,
                  const ThresholdRule rule,
                  const Array<double>& thresholdVector)
@@ -933,7 +933,7 @@ namespace forward {
   // // To get the j-th row (j=0,...,p) of this matrix, print
   // // from (j*N) to (j*N + N) i.e. (for i=0; i<N; i++){ jRow[i] = sampleMat[j*N+i];}
   // // Use getRow(N, sampleMat, k, output) to get the k-th row
-  auto
+  inline auto
   getBasisMatrix(const Array<complex>& u, const Array<complex>& v, const unsigned int p)
       -> Matrix<complex> {
 
@@ -1049,7 +1049,7 @@ namespace forward {
   // all j)
   // // thresholdRule - hard, soft
   // // store deconvolved signal in output
-  auto
+  inline auto
   wienForwd(const Array<complex>& fSignal,
             const Array<complex>& fImpulse,
             const Matrix<complex>& basisMatrix,
@@ -1197,7 +1197,7 @@ namespace forward {
    * @param rho         The (p+1) Fourier shrinkage parameters.
    * @param rule        The threshold rule to use.
    */
-  auto
+  inline auto
   deconvolve(const Array<double>& signal,
              const Array<double>& response,
              const unsigned int p,
