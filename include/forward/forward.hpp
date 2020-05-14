@@ -1167,6 +1167,14 @@ namespace forward {
   } // END: wienForwd
 
   /**
+   * Check if `N` is a power of two.
+   */
+  inline auto
+  is_pow2(const int N) -> bool {
+    return fabs(fmod(log2(N), 1)) < 1e-9;
+  }
+
+  /**
    * Deconvolve `response` out of `waveform`.
    *
    * Both waveforms must be the same-size and their length
@@ -1194,6 +1202,18 @@ namespace forward {
     // check that scaling and rho are the right length
     if ((scaling.size() != p + 1) || (rho.size() != p + 1)) {
       throw std::invalid_argument("`scaling` and `rho` must be of length (p+1)");
+    }
+
+    // the signal and response must have equal length
+    if (response.size() != signal.size()) {
+      throw std::invalid_argument(
+          "`signal` and `response` must both the same length.");
+    }
+
+    // and the two signals must be of length 2. ** N
+    if (!(is_pow2(signal.size())) || !(is_pow2(response.size()))) {
+      throw std::invalid_argument(
+          "`signal` and `response` must both be a power of 2 in length.");
     }
 
     // compute the FFT of the signal and the transform
