@@ -289,9 +289,9 @@ namespace forward {
    * dimension `sdim`. e.g. for p-th stage wavelets, sdim = N/2**p.
    *
    *
-   * @param z      The input signal
-   * @param sdim   The smallest dimension
-   * @param util   The first parent wavelet
+   * @param z      The input signal.
+   * @param sdim   The smallest dimension.
+   * @param util   The first parent wavelet.
    * @param ztil   The second parent wavelet.
    *
    */
@@ -906,17 +906,17 @@ namespace forward {
     return std::make_pair(output, ratioThresholded);
   }
 
-  // // get the basis matrix for p-th stage wavelet tansform
-  // // level = 1, 2, ..., (p+1)
-  // // (p+1)th level is the coarsest level
-  // // u, v are the filters
-  // // Structure of the basisMatrix ///////////
-  // // basisMatrix is N*(p+1) length, but we are storing it as a linear array
-  // // A sample basisMatrix: std::complex<double> sampleMat[(p+1)*N];
-  // // The last row corresponds to the coarsest wavelet level
-  // // To get the j-th row (j=0,...,p) of this matrix, print
-  // // from (j*N) to (j*N + N) i.e. (for i=0; i<N; i++){ jRow[i] = sampleMat[j*N+i];}
-  // // Use getRow(N, sampleMat, k, output) to get the k-th row
+  /**
+   * Get the basis matrix for p-th stage wavelet transform.
+   *
+   * (p+1)-th is the coarsest level of the desired wavelet transform.
+   *
+   * The last row of the returned matrix is the coarsest wavelet level.
+   *
+   * @param u    The first wavelet filter
+   * @param v    The second wavelet filter.
+   *
+   */
   inline auto
   getBasisMatrix(const Array<complex>& u, const Array<complex>& v, const unsigned int p)
       -> Matrix<complex> {
