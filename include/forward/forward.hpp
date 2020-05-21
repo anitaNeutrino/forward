@@ -893,7 +893,7 @@ namespace forward {
       const auto Nj{k == p ? N - starting + 1 : len};
 
       // save the thresholded vector
-      ratioThresholded[k] = (Nj - thresholded) / Nj;
+      ratioThresholded[k] = (Nj - thresholded) / float(Nj);
 
       // for the next loop
       // lenght related to the next level wavelet coeffs
