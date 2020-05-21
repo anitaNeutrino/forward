@@ -13,6 +13,34 @@ using namespace forward;
 using NumpyReal    = py::array_t<double>;
 using NumpyComplex = py::array_t<std::complex<double>>;
 
+template <typename T>
+auto
+matrix_to_array(const std::vector<std::vector<T>>& matrix) -> py::array_t<T> {
+
+  // get the number of rows
+  const auto N{matrix.size()};
+
+  // and the number of columns in the matrim
+  const auto M{matrix[0].size()};
+
+  // create the matrix
+  py::array_t<T> array({ N, M });
+
+  // get a mutable reference
+  // auto r = array.mutable_unchecked<2>();
+  auto r = array.mutable_data();
+
+  // and fill in the matrix
+  for (auto i = 0; i < N; ++i) {
+    for (auto j = 0; j < M; ++j) {
+      r[i, j] = matrix[i][j];
+    }
+  }
+
+  // and return the matrix
+  return array;
+}
+
 // convert a std::vector into a py::array
 template <typename T>
 auto
@@ -54,6 +82,19 @@ PYBIND11_MODULE(forward, m) {
       .value("Soft", ThresholdRule::Soft)
       .value("Hard", ThresholdRule::Hard);
 
+  m.def("getBasisMatrix",
+        [](const NumpyComplex& u, const NumpyComplex& v, const unsigned int p) -> NumpyComplex {
+
+          // get the basis matrix
+          const auto matrix{getBasisMatrix(array_to_vector(u),
+                                           array_to_vector(v),
+                                           p)};
+
+          // and return it as a 2D numpy array
+          return matrix_to_array(matrix);
+
+        }, py::arg("u"), py::arg("v"), py::arg("p"),
+        "Compute the basis matrix for a pair of wavelet filters.");
   m.def(
       "filt",
       [](const int N, const WaveletType& filterType)
@@ -69,6 +110,7 @@ PYBIND11_MODULE(forward, m) {
                                vector_to_array(std::get<3>(filters)));
 
       },
+      py::arg("N"), py::arg("filterType"),
       "Get the wavelet basis filters.");
 
   m.def(
@@ -139,5 +181,57 @@ PYBIND11_MODULE(forward, m) {
       py::arg("rho"),
       py::arg("rule"),
       "Perform FoRWarD wavelet deconvolution.");
+  m.def(
+      "get_wavelets",
+      [](const NumpyReal& signal,
+         const NumpyReal& response,
+         const unsigned int p,
+         const WaveletType type,
+         const double noiseSd,
+         const NumpyReal& scaling,
+         const NumpyReal& rho,
+         const ThresholdRule rule) -> std::tuple<NumpyComplex, NumpyReal> {
+
+        // compute the wavelet transform as an std::vector
+        const auto wave_thresholds{get_wavelets(array_to_vector(signal),
+                                                array_to_vector(response),
+                                                p,
+                                                type,
+                                                noiseSd,
+                                                array_to_vector(scaling),
+                                                array_to_vector(rho),
+                                                rule)};
+
+        // extract references to the wavelet coefficients
+        const auto wavelets{std::get<0>(wave_thresholds)};
+
+        // extract references to the thresholds
+        const auto thresholds{std::get<1>(wave_thresholds)};
+
+        // and return it back as a Python array
+        return std::make_tuple(vector_to_array(wavelets),
+                               vector_to_array(thresholds));
+      },
+      py::arg("signal"),
+      py::arg("response"),
+      py::arg("p"),
+      py::arg("type"),
+      py::arg("noiseSd"),
+      py::arg("scaling"),
+      py::arg("rho"),
+      py::arg("rule"),
+      "Return the wavelet coefficients and thresholds");
+  m.def(
+      "coeff",
+      [](const NumpyComplex& w,
+         const unsigned int p,
+         const unsigned int q) -> NumpyComplex {
+        // and return it back as a Python array
+        return vector_to_array(coeff(array_to_vector(w), p, q));
+      },
+      py::arg("w"),
+      py::arg("p"),
+      py::arg("q"),
+      "Return the q-th wavelet coefficient.");
 
 } // PYBIND11-MODULE

@@ -1206,8 +1206,7 @@ namespace forward {
 
     // the signal and response must have equal length
     if (response.size() != signal.size()) {
-      throw std::invalid_argument(
-          "`signal` and `response` must both the same length.");
+      throw std::invalid_argument("`signal` and `response` must both the same length.");
     }
 
     // and the two signals must be of length 2. ** N
@@ -1259,5 +1258,118 @@ namespace forward {
     return deconvolved;
 
   } // END: deconvolve
+
+  /**
+   * Return the wavelet representation and thresholds.
+   *
+   * Both waveforms must be the same-size and their length
+   * must be a power of 2.
+   *
+   * @param waveform    The waveform to deconvolve.
+   * @param response    The response to use.
+   * @param p           The number of wavelet stages.
+   * @param type        The wavelet family to use.
+   * @param noisedSd    The standard deviation of the noise.
+   * @param scaling     The (p+1)-length Wiener scaling.
+   * @param rho         The (p+1) Fourier shrinkage parameters.
+   * @param rule        The threshold rule to use.
+   */
+  inline auto
+  get_wavelets(const Array<double>& signal,
+               const Array<double>& response,
+               const unsigned int p,
+               const WaveletType type,
+               const double noiseSd,
+               const Array<double>& scaling,
+               const Array<double>& rho,
+               const ThresholdRule rule) -> std::pair<Array<complex>, Array<double>> {
+
+    // check that scaling and rho are the right length
+    if ((scaling.size() != p + 1) || (rho.size() != p + 1)) {
+      throw std::invalid_argument("`scaling` and `rho` must be of length (p+1)");
+    }
+
+    // the signal and response must have equal length
+    if (response.size() != signal.size()) {
+      throw std::invalid_argument("`signal` and `response` must both the same length.");
+    }
+
+    // and the two signals must be of length 2. ** N
+    if (!(is_pow2(signal.size())) || !(is_pow2(response.size()))) {
+      throw std::invalid_argument(
+          "`signal` and `response` must both be a power of 2 in length.");
+    }
+
+    // compute the FFT of the signal and the transform
+    const auto fSignal{fft(signal)};
+    const auto fResponse{fft(response)};
+
+    // the length of the signals
+    const auto N{signal.size()};
+
+    // generate the filters
+    const auto filters{filt(N, type)};
+
+    // and get references to the u, v filters
+    const auto u{std::get<0>(filters)};
+    const auto v{std::get<1>(filters)};
+
+    // generate the basis matrix
+    const auto matrix{getBasisMatrix(u, v, p)};
+
+    // do the deconvolution into the wavelet basis
+    const auto wave_thresholds{
+        wienForwd(fSignal, fResponse, matrix, noiseSd, scaling, rho, rule)};
+
+    // and return
+    return wave_thresholds;
+
+  } // END: get_wavelets
+
+  /**
+   * Given the p-th stage wavelet transform, get the q-th level coeff.
+   * `q` can be 1:p+1. For q=p+1, this outputs the coarsest part.
+   */
+  inline auto
+  coeff(const Array<complex>& w, const unsigned int p, const unsigned int q) -> Array<complex> {
+
+    // check if this is a valid stage
+    if (q > p+1) {
+      throw std::invalid_argument("q must be 1..(p+1).");
+    }
+
+    // the vector that we mutate as we leep
+    auto recv{w};
+
+    // the vectors that we use in the loop
+    auto first{recv};
+    auto second{recv};
+
+    // the maximum number of loop iterations
+    const unsigned int maxit{q == p+1 ? p : q};
+
+    // loop through the coefficients
+    for (unsigned int i = 0; i < maxit; ++i) {
+
+      // the length of the current transform
+      const auto N{recv.size()};
+
+      // get the first half of the vector
+      first = Array<complex>(recv.cbegin(), recv.cbegin() + N/2);
+
+      // and the second half of the vector
+      second = Array<complex>(recv.cbegin() + N/2, recv.cend());
+
+      // and set recv to equal the second part
+      recv = second;
+    }
+
+    // extract the values that we want
+    const auto values{q == p+1 ? second : first};
+
+    // and return the coefficients
+    return values;
+
+  }
 
 } // END namespace forward

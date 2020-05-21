@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import forward
 
 
-def test_deconvolve():
+def test_deconvolve(signal=None, response=None):
     """
     Perform a basic test for the deconvolution.
     """
@@ -28,8 +28,8 @@ def test_deconvolve():
     wtype = forward.WaveletType.d10
 
     # get the signal and the response
-    signal = get_waveform()
-    response = get_response()
+    signal = signal if signal is not None else get_waveform()
+    response = response if response is not None else get_response()
 
     # do the inverse wavelet transform
     deconvolved = forward.deconvolve(
@@ -39,6 +39,37 @@ def test_deconvolve():
     # and let's plot
     plt.plot(deconvolved)
     plt.show()
+
+
+def test_get_wavelets(signal=None, response=None):
+    """
+    Perform a basic test for the deconvolution.
+    """
+
+    # let's do a 4-stage deconvolution
+    p = 4
+
+    # we want soft thresholding
+    rule = forward.ThresholdRule.Soft
+
+    # the standard deviation of the noise
+    noiseSd = 11.2
+
+    # initialize a scaling array equal to 0.5
+    scaling = np.zeros(p + 1) + 0.5
+
+    # and the shrinkage parameter
+    rho = np.zeros(p + 1) + 1.0
+
+    # let's use the d10 basis
+    wtype = forward.WaveletType.d10
+
+    # get the signal and the response
+    signal = signal if signal is not None else get_waveform()
+    response = response if response is not None else get_response()
+
+    # and return the wavelets
+    return forward.get_wavelets(signal, response, p, wtype, noiseSd, scaling, rho, rule)
 
 
 def get_waveform() -> np.ndarray:
