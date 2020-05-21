@@ -978,7 +978,6 @@ namespace forward {
       const auto g_new{convolve(g_old, U[j])};
       const auto f_new{convolve(g_old, V[j])}; // this is from libWTools
       // IS THIS A BUG? RP. DB had both of these using g_old
-      // const auto f_new{convolve(f_old, V[j])};
 
       // add this into the matrix
       std::copy(f_new.begin(), f_new.end(), basisMatrix[j].begin());
@@ -1329,9 +1328,15 @@ namespace forward {
   /**
    * Given the p-th stage wavelet transform, get the q-th level coeff.
    * `q` can be 1:p+1. For q=p+1, this outputs the coarsest part.
+   *
+   * @param w    The wavelet coefficient or threshold vector.
+   * @param p    The number of stages used to generate w.
+   * @param q    The index (1-indexed) of the stage to return.
+   *
    */
+  template <typename T>
   inline auto
-  coeff(const Array<complex>& w, const unsigned int p, const unsigned int q) -> Array<complex> {
+  coeff(const Array<T>& w, const unsigned int p, const unsigned int q) -> Array<T> {
 
     // check if this is a valid stage
     if (q > p+1) {
@@ -1349,16 +1354,16 @@ namespace forward {
     const unsigned int maxit{q == p+1 ? p : q};
 
     // loop through the coefficients
-    for (unsigned int i = 0; i < maxit; ++i) {
+    for (unsigned int i = 1; i <= maxit; ++i) {
 
       // the length of the current transform
       const auto N{recv.size()};
 
       // get the first half of the vector
-      first = Array<complex>(recv.cbegin(), recv.cbegin() + N/2);
+      first = Array<T>(recv.cbegin(), recv.cbegin() + N/2);
 
       // and the second half of the vector
-      second = Array<complex>(recv.cbegin() + N/2, recv.cend());
+      second = Array<T>(recv.cbegin() + N/2, recv.cend());
 
       // and set recv to equal the second part
       recv = second;

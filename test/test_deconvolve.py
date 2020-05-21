@@ -68,8 +68,85 @@ def test_get_wavelets(signal=None, response=None):
     signal = signal if signal is not None else get_waveform()
     response = response if response is not None else get_response()
 
+    # get the coefficients
+    w, thresholds = forward.get_wavelets(
+        signal, response, p, wtype, noiseSd, scaling, rho, rule
+    )
+
     # and return the wavelets
-    return forward.get_wavelets(signal, response, p, wtype, noiseSd, scaling, rho, rule)
+    return w, thresholds
+
+def test_plot_coeffs(signal=None, response=None) -> None:
+    """
+    Perform a plot of the various coefficients.
+    """
+
+    # let's do a 4-stage deconvolution
+    p = 4
+
+    # we want soft thresholding
+    rule = forward.ThresholdRule.Soft
+
+    # the standard deviation of the noise
+    noiseSd = 11.2
+
+    # initialize a scaling array equal to 0.5
+    scaling = np.zeros(p + 1) + 0.5
+
+    # and the shrinkage parameter
+    rho = np.zeros(p + 1) + 1.0
+
+    # let's use the d10 basis
+    wtype = forward.WaveletType.d10
+
+    # get the signal and the response
+    signal = signal if signal is not None else get_waveform()
+    response = response if response is not None else get_response()
+
+    # get the coefficients
+    w, thresholds = forward.get_wavelets(
+        signal, response, p, wtype, noiseSd, scaling, rho, rule
+    )
+
+    # and plot the coefficients
+    forward.plot_coeffs(w, p)
+
+
+def test_plot_thresholds(signal=None, response=None) -> None:
+    """
+    Perform a plot of the various coefficients.
+    """
+
+    # let's do a 4-stage deconvolution
+    p = 4
+
+    # we want soft thresholding
+    rule = forward.ThresholdRule.Soft
+
+    # the standard deviation of the noise
+    noiseSd = 11.2
+
+    # initialize a scaling array equal to 0.5
+    scaling = np.zeros(p + 1) + 0.5
+
+    # and the shrinkage parameter
+    rho = np.zeros(p + 1) + 1.0
+
+    # let's use the d10 basis
+    wtype = forward.WaveletType.d10
+
+    # get the signal and the response
+    signal = signal if signal is not None else get_waveform()
+    response = response if response is not None else get_response()
+
+    # get the coefficients
+    w, thresholds = forward.get_wavelets(
+        signal, response, p, wtype, noiseSd, scaling, rho, rule
+    )
+
+    # and plot the coefficients
+    forward.plot_coeffs(thresholds, p)
+
 
 
 def get_waveform() -> np.ndarray:

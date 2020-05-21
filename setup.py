@@ -32,16 +32,16 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     keywords=["deconvolution", "signal processing", "wavelets"],
-    packages=[],
+    packages=["forward"],
     python_requires=">=3.6*, <4",
     install_requires=["numpy"],
     extras_require={
-        "test": ["matplotlib", "mypy", "flake8", "black", "pytest", "coverage"],
+        "test": ["matplotlib", "numpy", "mypy", "flake8", "black", "pytest", "coverage"],
     },
     scripts=[],
     project_urls={},
     # call into CMake to build our module
-    ext_modules=[CMakeExtension("forward")],
+    ext_modules=[CMakeExtension("_forward")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
 )

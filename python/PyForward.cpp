@@ -61,7 +61,7 @@ array_to_vector(const py::array_t<T>& array) -> std::vector<T> {
 }
 
 // create our Python module
-PYBIND11_MODULE(forward, m) {
+PYBIND11_MODULE(_forward, m) {
 
   // set a docstring
   m.doc() = "Deconvolve 1D signals using ForWaRD.";
@@ -233,5 +233,17 @@ PYBIND11_MODULE(forward, m) {
       py::arg("p"),
       py::arg("q"),
       "Return the q-th wavelet coefficient.");
+  m.def(
+      "coeff",
+      [](const NumpyReal& thresholds,
+         const unsigned int p,
+         const unsigned int q) -> NumpyReal {
+        // and return it back as a Python array
+        return vector_to_array(coeff(array_to_vector(thresholds), p, q));
+      },
+      py::arg("thresholds"),
+      py::arg("p"),
+      py::arg("q"),
+      "Return the q-th threshold vector.");
 
 } // PYBIND11-MODULE

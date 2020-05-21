@@ -34,15 +34,15 @@ ENDIF()
 
 # and wrap each of these sources into our app
 # use SYSTEM to include PyBind11 as a system library
-pybind11_add_module(forward SYSTEM "PyForward.cpp")
+pybind11_add_module(_forward SYSTEM "PyForward.cpp")
 
 # add our include directory for header files
-target_include_directories(forward PRIVATE "${CMAKE_HOME_DIRECTORY}/include")
+target_include_directories(_forward PRIVATE "${CMAKE_HOME_DIRECTORY}/include")
 
 # and we need FFTW3
 find_package(FFTW3 REQUIRED)
-target_include_directories(forward PUBLIC ${FFTW3_INCLUDES})
-target_link_libraries(forward PUBLIC ${FFTW3_LIBRARIES})
+target_include_directories(_forward PUBLIC ${FFTW3_INCLUDES})
+target_link_libraries(_forward PUBLIC ${FFTW3_LIBRARIES})
 
 set(COMPILE_OPTIONS -Wall -Wextra -Wdisabled-optimization -fconcepts
   -pedantic -Wshadow -Wno-sign-conversion -Wno-sign-compare -Wold-style-cast
@@ -53,10 +53,10 @@ set(COMPILE_OPTIONS -Wall -Wextra -Wdisabled-optimization -fconcepts
   -Wmaybe-uninitialized -march=native -fmax-errors=5 -O3 -flto -Wfloat-equal)
 
 # add the compile options to the library
-target_compile_options(forward PRIVATE ${COMPILE_OPTIONS})
+target_compile_options(_forward PRIVATE ${COMPILE_OPTIONS})
 
 # add our install target
-install(TARGETS forward
+install(TARGETS _forward
   CONFIGURATIONS Release
   LIBRARY
-  DESTINATION "forward")
+  DESTINATION "_forward")
