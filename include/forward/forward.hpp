@@ -727,14 +727,14 @@ namespace forward {
       // Typically, fOriginal is same as the observed signal fSignal
       // We supply fOriginal = fSignal / ||fImpulse||_2
       // i.e. we normalize powOriginalSq by the mean of powImpulseSq
-      const auto powerOriginalSq{pow(abs(fSignal[i]), 2) / normSqImpulse * N};
+      const auto powerOriginalSq{pow(abs(fSignal[i]), 2) / normSqImpulse * float(N)};
 
       // and the squared power
       const auto powerImpulseSq{pow(abs(fImpulse[i]), 2)};
 
       // Compute the Fourier multiplier
       multiplier[i] = powerImpulseSq /
-                      (powerImpulseSq + scaling * N * pow(noiseSd, 2) / powerOriginalSq);
+                      (powerImpulseSq + scaling * float(N) * pow(noiseSd, 2.) / powerOriginalSq);
 
       // Perform the scaled Wiener Deconvolution
       out[i] = fNaive * multiplier[i];
@@ -1067,10 +1067,10 @@ namespace forward {
       // prepare  beta(k), the estimate for the k-th wavelet coeff
       // this can also be computed using FWT and choosing the appropriate indices,
       // that would probably be faster
-      const auto levelLength{j == (p + 1) ? N / pow(2, p) : N / pow(2, j)};
+      const size_t levelLength = j == (p + 1) ? N / pow(2., p) : N / pow(2., j);
 
       // compute the stopping index of the current level
-      const auto endIndex{j == (p + 1) ? N : startIndex + levelLength};
+      const size_t endIndex = j == (p + 1) ? N : startIndex + levelLength;
 
       // get the jth row of the basis matrix
       const auto jRow{basisMatrix[j - 1]};
@@ -1146,7 +1146,7 @@ namespace forward {
       // at j-th level
       // in my matlab code: sigmal
       leakedNoiseSd[j - 1] =
-          pow(pow(noiseSd, 2.) * real(innerProduct(firstPart, absMultiSq)) / N, 0.5);
+          pow(pow(noiseSd, 2.) * real(innerProduct(firstPart, absMultiSq)) / float(N), 0.5);
 
     } // END: loop over j
 
