@@ -37,7 +37,16 @@ setup(
     install_requires=["numpy"],
     extras_require={
         "octave": ["oct2py"],
-        "test": ["matplotlib", "numpy", "mypy", "flake8", "black", "pytest", "coverage"],
+        "test": [
+            "matplotlib",
+            "numpy",
+            "mypy",
+            "flake8",
+            "black",
+            "pytest",
+            "coverage",
+            "isort",
+        ],
     },
     scripts=[],
     project_urls={},
